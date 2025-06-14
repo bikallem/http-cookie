@@ -137,7 +137,7 @@ val to_set_cookie : t -> string
     Example of a string returned by the function,
 
     {v
-SID=31d4d96e407aad42; Path=/; Secure; HttpOnly; Expires=Sun, 06 Nov 1994 08:49:37 GMT
+    SID=31d4d96e407aad42; Path=/; Secure; HttpOnly; Expires=Sun, 06 Nov 1994 08:49:37 GMT
     v} *)
 
 val of_set_cookie : string -> (t, string) result
