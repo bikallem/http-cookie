@@ -22,11 +22,11 @@
 
     + {{:https://tools.ietf.org/html/rfc6265} RFC 6265 - Cookies}.
     + {{:https://datatracker.ietf.org/doc/html/rfc1123} Section 3.3.1 - HTTP
-      Date}
+       Date}
     + {{:https://datatracker.ietf.org/doc/html/rfc1034#section-3.5} Domain Name}
     + {{:https://datatracker.ietf.org/doc/html/rfc1123#section-2.1} Hosts}
     + {{:https://datatracker.ietf.org/doc/html/draft-main-ipaddr-text-rep-02#section-3}
-      IPv4/IPv6 Address} *)
+       IPv4/IPv6 Address} *)
 
 type t
 (** A HTTP cookie. *)
@@ -37,7 +37,7 @@ and date_time
 and same_site = [ `None | `Lax | `Strict ]
 (** 'Same-site' cookie attribute.
     {{:https://tools.ietf.org/html/draft-ietf-httpbis-cookie-same-site-00}
-    Same-site} *)
+     Same-site} *)
 
 (** {1 Pretty Printers} *)
 
@@ -96,11 +96,10 @@ val create :
   name:string ->
   string ->
   (t, string) result
-(** [create ~path ~domain ~expires ~max_age ~secure ~http_only ~same_site ~extension ~name
-    value]
-    is [Ok cookie] if all of the given parameters are valid cookie attribute
-    values. Otherwise it is [Error error] where [error] is the description of
-    the error. *)
+(** [create ~path ~domain ~expires ~max_age ~secure ~http_only ~same_site
+     ~extension ~name value] is [Ok cookie] if all of the given parameters are
+    valid cookie attribute values. Otherwise it is [Error error] where [error]
+    is the description of the error. *)
 
 val of_cookie : string -> (t list, string) result
 (** [of_cookie header] parses [header] - a string value which represents HTTP
@@ -116,7 +115,7 @@ val of_cookie : string -> (t list, string) result
     This returns two cookies with cookie names [SID] and [lang].
 
     {[
-      Http_cookie.of_cookie "SID=31d4d96e407aad42; lang=en-US"
+    Http_cookie.of_cookie "SID=31d4d96e407aad42; lang=en-US"
     ]} *)
 
 val to_cookie : t -> string
@@ -137,7 +136,7 @@ val to_set_cookie : t -> string
     Example of a string returned by the function,
 
     {v
-SID=31d4d96e407aad42; Path=/; Secure; HttpOnly; Expires=Sun, 06 Nov 1994 08:49:37 GMT
+    SID=31d4d96e407aad42; Path=/; Secure; HttpOnly; Expires=Sun, 06 Nov 1994 08:49:37 GMT
     v} *)
 
 val of_set_cookie : string -> (t, string) result
@@ -147,7 +146,7 @@ val of_set_cookie : string -> (t, string) result
     [s] is the HTTP 'Set-Cookie' header value. The syntax for the value is
     defined as [set-cookie-string] in
     {{:https://datatracker.ietf.org/doc/html/rfc6265#section-4.1.1} RFC 6265,
-    4.1} *)
+     4.1} *)
 
 (** {1 Cookie Attributes}
 
@@ -172,12 +171,14 @@ val path : t -> string option
 val domain : t -> string option
 (** [domain t] returns cookie domain attribute.
 
-    See {{:https://tools.ietf.org/html/rfc6265#section-4.1.2.3} cookie-domain} *)
+    See {{:https://tools.ietf.org/html/rfc6265#section-4.1.2.3} cookie-domain}
+*)
 
 val expires : t -> date_time option
 (** [expires t] returns a coookie expires attribute.
 
-    See {{:https://tools.ietf.org/html/rfc6265#section-4.1.2.1.} cookie-expires} *)
+    See {{:https://tools.ietf.org/html/rfc6265#section-4.1.2.1.} cookie-expires}
+*)
 
 val max_age : t -> int64 option
 (** [max_age t] returns a cookie max_age attribute.
@@ -188,7 +189,8 @@ val max_age : t -> int64 option
 val secure : t -> bool
 (** [secure t] returns a secure attribute.
 
-    See {{:https://tools.ietf.org/html/rfc6265#section-4.1.2.5} cookie-secure} *)
+    See {{:https://tools.ietf.org/html/rfc6265#section-4.1.2.5} cookie-secure}
+*)
 
 val http_only : t -> bool
 (** [http_only t] returns a http_only attribute.
@@ -198,13 +200,15 @@ val http_only : t -> bool
 val same_site : t -> same_site option
 (** [same_site t] returns a same_site attribute.
 
-    See {{:https://tools.ietf.org/html/draft-ietf-httpbis-cookie-same-site-00}
-    same-site} *)
+    See
+    {{:https://tools.ietf.org/html/draft-ietf-httpbis-cookie-same-site-00}
+     same-site} *)
 
 val extension : t -> string option
 (** [extension t] returns a cookie extension value.
 
-    See {{:https://tools.ietf.org/html/rfc6265#section-4.1.1} cookie-extension} *)
+    See {{:https://tools.ietf.org/html/rfc6265#section-4.1.1} cookie-extension}
+*)
 
 (** {1 Compare} *)
 

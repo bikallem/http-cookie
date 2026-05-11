@@ -155,38 +155,23 @@ let compare_date_time (dt1 : date_time) (dt2 : date_time) =
 
    https://datatracker.ietf.org/doc/html/rfc6265#section-4.1.1
 
-   set-cookie-header = "Set-Cookie:" SP set-cookie-string
-   set-cookie-string = cookie-pair *( ";" SP cookie-av )
-   cookie-pair       = cookie-name "=" cookie-value
-   cookie-name       = token
-   cookie-value      = *cookie-octet / ( DQUOTE *cookie-octet DQUOTE )
-   cookie-octet      = %x21 / %x23-2B / %x2D-3A / %x3C-5B / %x5D-7E
-                         ; US-ASCII characters excluding CTLs,
-                         ; whitespace DQUOTE, comma, semicolon,
-                         ; and backslash
-   token             = <token, defined in [RFC2616], Section 2.2>
+   set-cookie-header = "Set-Cookie:" SP set-cookie-string set-cookie-string =
+   cookie-pair *( ";" SP cookie-av ) cookie-pair = cookie-name "=" cookie-value
+   cookie-name = token cookie-value = *cookie-octet / ( DQUOTE *cookie-octet
+   DQUOTE ) cookie-octet = %x21 / %x23-2B / %x2D-3A / %x3C-5B / %x5D-7E ;
+   US-ASCII characters excluding CTLs, ; whitespace DQUOTE, comma, semicolon, ;
+   and backslash token = <token, defined in [RFC2616], Section 2.2>
 
-   cookie-av         = expires-av / max-age-av / domain-av /
-                       path-av / secure-av / httponly-av /
-                       extension-av
-   expires-av        = "Expires=" sane-cookie-date
-   sane-cookie-date  = <rfc1123-date, defined in [RFC2616], Section 3.3.1>
-   max-age-av        = "Max-Age=" non-zero-digit *DIGIT
-                         ; In practice, both expires-av and max-age-av
-                         ; are limited to dates representable by the
-                         ; user agent.
-   non-zero-digit    = %x31-39
-                         ; digits 1 through 9
-   domain-av         = "Domain=" domain-value
-   domain-value      = <subdomain>
-                         ; defined in [RFC1034], Section 3.5, as
-                         ; enhanced by [RFC1123], Section 2.1
-   path-av           = "Path=" path-value
-   path-value        = <any CHAR except CTLs or ";">
-   secure-av         = "Secure"
-   httponly-av       = "HttpOnly"
-   extension-av      = <any CHAR except CTLs or ";">
-*)
+   cookie-av = expires-av / max-age-av / domain-av / path-av / secure-av /
+   httponly-av / extension-av expires-av = "Expires=" sane-cookie-date
+   sane-cookie-date = <rfc1123-date, defined in [RFC2616], Section 3.3.1>
+   max-age-av = "Max-Age=" non-zero-digit *DIGIT ; In practice, both expires-av
+   and max-age-av ; are limited to dates representable by the ; user agent.
+   non-zero-digit = %x31-39 ; digits 1 through 9 domain-av = "Domain="
+   domain-value domain-value = <subdomain> ; defined in [RFC1034], Section 3.5,
+   as ; enhanced by [RFC1123], Section 2.1 path-av = "Path=" path-value
+   path-value = <any CHAR except CTLs or ";"> secure-av = "Secure" httponly-av =
+   "HttpOnly" extension-av = <any CHAR except CTLs or ";"> *)
 open Angstrom
 
 let token =
@@ -199,13 +184,9 @@ let token =
 
 let cookie_name = token
 
-(*
-cookie-value      = *cookie-octet / ( DQUOTE *cookie-octet DQUOTE )
-cookie-octet      = %x21 / %x23-2B / %x2D-3A / %x3C-5B / %x5D-7E
-                      ; US-ASCII characters excluding CTLs,
-                      ; whitespace DQUOTE, comma, semicolon,
-                      ; and backslash
-*)
+(* cookie-value = *cookie-octet / ( DQUOTE *cookie-octet DQUOTE ) cookie-octet =
+   %x21 / %x23-2B / %x2D-3A / %x3C-5B / %x5D-7E ; US-ASCII characters excluding
+   CTLs, ; whitespace DQUOTE, comma, semicolon, ; and backslash *)
 let cookie_value =
   let cookie_octet = function
     | '\x21'
@@ -225,20 +206,16 @@ let cookie_pair =
 
 (* Domain attribute value:
 
-    domain-value      = <subdomain>
-                       ; defined in [RFC1034], Section 3.5, as
-                       ; enhanced by [RFC1123], Section 2.1
+   domain-value = <subdomain> ; defined in [RFC1034], Section 3.5, as ; enhanced
+   by [RFC1123], Section 2.1
 
    https://datatracker.ietf.org/doc/html/rfc1034#section-3.5
 
-    <subdomain> ::= <label> | <subdomain> "." <label>
-    <label> ::= <letter> [ [ <ldh-str> ] <let-dig> ]
-    <ldh-str> ::= <let-dig-hyp> | <let-dig-hyp> <ldh-str>
-    <let-dig-hyp> ::= <let-dig> | "-"
-    <let-dig> ::= <letter> | <digit>
-    <letter> ::= any one of the 52 alphabetic characters A through Z or a to z
-    <digit> ::= any one of the ten digits 0 through 9
-*)
+   <subdomain> ::= <label> | <subdomain> "." <label> <label> ::= <letter> [ [
+   <ldh-str> ] <let-dig> ] <ldh-str> ::= <let-dig-hyp> | <let-dig-hyp> <ldh-str>
+   <let-dig-hyp> ::= <let-dig> | "-" <let-dig> ::= <letter> | <digit> <letter>
+   ::= any one of the 52 alphabetic characters A through Z or a to z <digit> ::=
+   any one of the ten digits 0 through 9 *)
 let string_of_list l = List.to_seq l |> String.of_seq
 let[@inline always] is_digit = function '0' .. '9' -> true | _ -> false
 
@@ -280,11 +257,10 @@ let domain_name =
     string_of_list (first_char :: middle_chars)
   in
   let subdomain = sep_by1 (char '.') label in
-  (* A cookie domain attribute value may start with a leading dot which
-     can ignored.
+  (* A cookie domain attribute value may start with a leading dot which can
+     ignored.
 
-     https://datatracker.ietf.org/doc/html/rfc6265#section-4.1.2.3
-  *)
+     https://datatracker.ietf.org/doc/html/rfc6265#section-4.1.2.3 *)
   let* () = option () (char '.' *> return ()) in
   let* start_pos = pos in
   let* subdomain = subdomain in
@@ -294,15 +270,10 @@ let domain_name =
     fail (Format.sprintf "Domain attribute length exceeds 255 characters")
   else return (String.concat "." subdomain)
 
-(*
-     IPv4address = d8 "." d8 "." d8 "." d8
+(* IPv4address = d8 "." d8 "." d8 "." d8
 
-        d8          = DIGIT               ; 0-9
-                    / %x31-39 DIGIT       ; 10-99
-                    / "1" 2DIGIT          ; 100-199
-                    / "2" %x30-34 DIGIT   ; 200-249
-                    / "25" %x30-35        ; 250-255
-*)
+   d8 = DIGIT ; 0-9 / %x31-39 DIGIT ; 10-99 / "1" 2DIGIT ; 100-199 / "2" %x30-34
+   DIGIT ; 200-249 / "25" %x30-35 ; 250-255 *)
 let ipv4_address =
   let d8 =
     lift2
@@ -329,19 +300,11 @@ let ipv4_address =
   let+ oct4 = d8 in
   Format.sprintf "%s.%s.%s.%s" oct1 oct2 oct3 oct4
 
-(*
-   IPv6address =                            6(h16 ":") ls32
-                 /                     "::" 5(h16 ":") ls32
-                 / [             h16 ] "::" 4(h16 ":") ls32
-                 / [ *1(h16 ":") h16 ] "::" 3(h16 ":") ls32
-                 / [ *2(h16 ":") h16 ] "::" 2(h16 ":") ls32
-                 / [ *3(h16 ":") h16 ] "::"   h16 ":"  ls32
-                 / [ *4(h16 ":") h16 ] "::"            ls32
-                 / [ *5(h16 ":") h16 ] "::"             h16
-                 / [ *6(h16 ":") h16 ] "::"
-           ls32 = h16 ":" h16 / IPv4address
-           h16  = 1*4HEXDIG
-*)
+(* IPv6address = 6(h16 ":") ls32 / "::" 5(h16 ":") ls32 / [ h16 ] "::" 4(h16
+   ":") ls32 / [ *1(h16 ":") h16 ] "::" 3(h16 ":") ls32 / [ *2(h16 ":") h16 ]
+   "::" 2(h16 ":") ls32 / [ *3(h16 ":") h16 ] "::" h16 ":" ls32 / [ *4(h16 ":")
+   h16 ] "::" ls32 / [ *5(h16 ":") h16 ] "::" h16 / [ *6(h16 ":") h16 ] "::"
+   ls32 = h16 ":" h16 / IPv4address h16 = 1*4HEXDIG *)
 let ipv6_address =
   let h16 =
     let* hexdigits =
@@ -422,9 +385,9 @@ let ipv6_address =
       else
         ip_parts
         |> List.mapi (fun i -> function
-             | `H16 h16 -> h16
-             | `IPv4 ipv4 -> ipv4
-             | `Dbl_colon -> if i = 0 || i = len' - 1 then ":" else "")
+          | `H16 h16 -> h16
+          | `IPv4 ipv4 -> ipv4
+          | `Dbl_colon -> if i = 0 || i = len' - 1 then ":" else "")
         |> String.concat ":"
     in
     return ip
@@ -443,38 +406,23 @@ let extension_value = cookie_attr_value
 
 (* https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1
 
-   HTTP cookie specifies RFC 1123 date. The rest is included here
-   for completeness.
+   HTTP cookie specifies RFC 1123 date. The rest is included here for
+   completeness.
 
-   HTTP-date    = rfc1123-date | rfc850-date | asctime-date
-   rfc1123-date = wkday "," SP date1 SP time SP "GMT"
-   rfc850-date  = weekday "," SP date2 SP time SP "GMT"
-   asctime-date = wkday SP date3 SP time SP 4DIGIT
-   date1        = 2DIGIT SP month SP 4DIGIT
-                 ; day month year (e.g., 02 Jun 1982)
-   date2        = 2DIGIT "-" month "-" 2DIGIT
-                 ; day-month-year (e.g., 02-Jun-82)
-   date3        = month SP ( 2DIGIT | ( SP 1DIGIT ))
-                 ; month day (e.g., Jun  2)
-   time         = 2DIGIT ":" 2DIGIT ":" 2DIGIT
-                 ; 00:00:00 - 23:59:59
-   wkday        = "Mon" | "Tue" | "Wed"
-               | "Thu" | "Fri" | "Sat" | "Sun"
-   weekday      = "Monday" | "Tuesday" | "Wednesday"
-               | "Thursday" | "Friday" | "Saturday" | "Sunday"
-   month        = "Jan" | "Feb" | "Mar" | "Apr"
-               | "May" | "Jun" | "Jul" | "Aug"
-               | "Sep" | "Oct" | "Nov" | "Dec"
-*)
+   HTTP-date = rfc1123-date | rfc850-date | asctime-date rfc1123-date = wkday
+   "," SP date1 SP time SP "GMT" rfc850-date = weekday "," SP date2 SP time SP
+   "GMT" asctime-date = wkday SP date3 SP time SP 4DIGIT date1 = 2DIGIT SP month
+   SP 4DIGIT ; day month year (e.g., 02 Jun 1982) date2 = 2DIGIT "-" month "-"
+   2DIGIT ; day-month-year (e.g., 02-Jun-82) date3 = month SP ( 2DIGIT | ( SP
+   1DIGIT )) ; month day (e.g., Jun 2) time = 2DIGIT ":" 2DIGIT ":" 2DIGIT ;
+   00:00:00 - 23:59:59 wkday = "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat" |
+   "Sun" weekday = "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" |
+   "Saturday" | "Sunday" month = "Jan" | "Feb" | "Mar" | "Apr" | "May" | "Jun" |
+   "Jul" | "Aug" | "Sep" | "Oct" | "Nov" | "Dec" *)
 let http_date =
   let wkday =
-    string "Mon"
-    <|> string "Tue"
-    <|> string "Wed"
-    <|> string "Thu"
-    <|> string "Fri"
-    <|> string "Sat"
-    <|> string "Sun"
+    string "Mon" <|> string "Tue" <|> string "Wed" <|> string "Thu"
+    <|> string "Fri" <|> string "Sat" <|> string "Sun"
   in
   let digits count =
     let* digits = list @@ List.init count (fun _ -> digit) in
@@ -519,18 +467,9 @@ let http_date =
     (hh, mm, ss)
   in
   let month =
-    string "Jan"
-    <|> string "Feb"
-    <|> string "Mar"
-    <|> string "Apr"
-    <|> string "May"
-    <|> string "Jun"
-    <|> string "Jul"
-    <|> string "Aug"
-    <|> string "Sep"
-    <|> string "Oct"
-    <|> string "Nov"
-    <|> string "Dec"
+    string "Jan" <|> string "Feb" <|> string "Mar" <|> string "Apr"
+    <|> string "May" <|> string "Jun" <|> string "Jul" <|> string "Aug"
+    <|> string "Sep" <|> string "Oct" <|> string "Nov" <|> string "Dec"
   in
   let validate_year year =
     if year < 1601 then
@@ -587,13 +526,8 @@ let cookie_av =
   let secure_av = string "Secure" *> return `Secure in
   let httponly_av = string "HttpOnly" *> return `Http_only in
   let extension_av = extension_value >>| fun v -> `Extension (Some v) in
-  expires_av
-  <|> max_age_av
-  <|> domain_av
-  <|> path_av
-  <|> secure_av
-  <|> httponly_av
-  <|> extension_av
+  expires_av <|> max_age_av <|> domain_av <|> path_av <|> secure_av
+  <|> httponly_av <|> extension_av
 
 let set_cookie_string =
   let* name, value = cookie_pair in
@@ -602,9 +536,8 @@ let set_cookie_string =
 
 (* https://datatracker.ietf.org/doc/html/rfc6265#section-4.2.1
 
-   cookie-header = "Cookie:" OWS cookie-string OWS
-   cookie-string = cookie-pair *( ";" SP cookie-pair )
-*)
+   cookie-header = "Cookie:" OWS cookie-string OWS cookie-string = cookie-pair
+   *( ";" SP cookie-pair ) *)
 let cookie_string =
   let* cookies = sep_by1 (char ';' *> char '\x20') cookie_pair in
   return cookies
@@ -691,21 +624,21 @@ let create ?path ?domain ?expires ?max_age ?(secure = false) ?(http_only = true)
 let of_cookie header =
   parse_string ~consume:All cookie_string header
   |> Result.map (fun cookies' ->
-         List.map
-           (fun (name, value) ->
-             {
-               name;
-               value;
-               path = None;
-               domain = None;
-               expires = None;
-               max_age = None;
-               secure = false;
-               http_only = false;
-               same_site = None;
-               extension = None;
-             })
-           cookies')
+      List.map
+        (fun (name, value) ->
+          {
+            name;
+            value;
+            path = None;
+            domain = None;
+            expires = None;
+            max_age = None;
+            secure = false;
+            http_only = false;
+            same_site = None;
+            extension = None;
+          })
+        cookies')
   |> Result.map_error (fun s -> Format.sprintf "Invalid cookie %s" s)
 
 let to_cookie t = Format.sprintf "%s=%s" t.name t.value
@@ -732,28 +665,28 @@ let to_set_cookie t =
 let of_set_cookie set_cookie =
   parse_string ~consume:Consume.All set_cookie_string set_cookie
   |> Result.map (fun (name, value, attr_values) ->
-         List.fold_left
-           (fun cookie -> function
-             | `Expires expires -> { cookie with expires }
-             | `Max_age max_age -> { cookie with max_age }
-             | `Domain domain -> { cookie with domain }
-             | `Path path -> { cookie with path }
-             | `Secure -> { cookie with secure = true }
-             | `Http_only -> { cookie with http_only = true }
-             | `Extension extension -> { cookie with extension })
-           {
-             name;
-             value;
-             path = None;
-             domain = None;
-             expires = None;
-             max_age = None;
-             secure = false;
-             http_only = false;
-             same_site = None;
-             extension = None;
-           }
-           attr_values)
+      List.fold_left
+        (fun cookie -> function
+          | `Expires expires -> { cookie with expires }
+          | `Max_age max_age -> { cookie with max_age }
+          | `Domain domain -> { cookie with domain }
+          | `Path path -> { cookie with path }
+          | `Secure -> { cookie with secure = true }
+          | `Http_only -> { cookie with http_only = true }
+          | `Extension extension -> { cookie with extension })
+        {
+          name;
+          value;
+          path = None;
+          domain = None;
+          expires = None;
+          max_age = None;
+          secure = false;
+          http_only = false;
+          same_site = None;
+          extension = None;
+        }
+        attr_values)
   |> Result.map_error (fun s -> Format.sprintf "Invalid 'Set-Cookie' data %s" s)
 
 (* Attributes *)

@@ -1,4 +1,4 @@
-version = 0.24.1
-profile = conventional
-break-infix = fit-or-vertical
-parse-docstrings = true
+profile=conventional
+parse-docstrings=true
+wrap-comments = true
+comment-check = true
