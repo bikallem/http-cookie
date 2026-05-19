@@ -1,3 +1,8 @@
+## v4.3.1 2025-06-15
+- remove check for duplicate cookies, navigator may send duplicate cookies and break the server
+- allow max-age of 0L and -1L as it is a standard way to expire a cookie
+- expiring a cookie should not remove domain and path
+
 ## v4.3 2023-01-17
 - add `expire` functionality (#8 @craff)
 - make http-cookie more lean by removing `fmt` dependency.

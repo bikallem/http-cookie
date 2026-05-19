@@ -2,7 +2,7 @@
 
 (name http-cookie)
 
-(version 4.3.0)
+(version 4.3.1)
 
 (using mdx 0.3)
 
